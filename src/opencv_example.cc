@@ -125,7 +125,8 @@ int main() {
 
     // Finally display the webcam image with the resulting bounding-boxes
     cv::imshow(window_text, cv_image);
-    if (cv::waitKey(30) & 0xFF == 27) {  // can be changed to force a certain framerate
+    const auto wait_ms = 30;  // can be changed to force a certain framerate
+    if ((cv::waitKey(wait_ms) & 0xFF) == 27) {
       // Exit when ESC is pressed
       break;
     }
