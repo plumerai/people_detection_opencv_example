@@ -2,7 +2,7 @@
 
 This is the source code for a simple version of using the Plumerai People Detection library in an end-to-end demo setting. It runs on Linux, uses OpenCV and V4L, and retrieves input data from a webcam and writes box coordinates to console and to an output video stream displayed on screen. It can be modified as needed for proto-typing with the Plumerai People Detection library.
 
-The Plumerai People Detection library itself is not included: this repository can't be used without access to the library. If you do not have access to the library and would like to evaluate it, then contact us at hello@plumerai.com. For more information, see [docs.plumerai.com](https://docs.plumerai.com).
+The Plumerai People Detection library itself is not included: this repository can't be used without access to the library. If you do not have access to the library and would like to evaluate it, then contact us at [plumerai.com/contact_us](https://plumerai.com/contact_us). For more information, see [plumerai.com/people-detection](https://plumerai.com/people-detection).
 
 ## Linux system requirements
 
