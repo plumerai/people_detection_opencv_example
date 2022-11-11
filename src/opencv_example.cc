@@ -17,8 +17,10 @@
 #include "opencv2/videoio.hpp"
 
 // The Plumerai People Detection library. If you do not have access to this
-// library and would like to evaluate it, then contact us at hello@plumerai.com.
-// See docs.plumerai.com for information how to use it.
+// library and would like to evaluate it, then contact us via
+// https://plumerai.com/contact_us. For more information, see our website
+// https://plumerai.com/people-detection, and docs.plumerai.com for information
+// how to use it.
 #include "plumerai/people_detection.h"
 
 // Input camera settings (change as needed)
