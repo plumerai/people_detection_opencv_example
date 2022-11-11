@@ -1,0 +1,30 @@
+name: Test
+
+on:
+  pull_request: {}
+
+jobs:
+
+  CppLint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: clang-format lint
+        uses: DoozyX/clang-format-lint-action@v0.14
+        with:
+          clangFormatVersion: 12
+
+  CppBuild:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install requirements
+        run: |
+          sudo apt-get update
+          sudo apt-get install -yq libopencv-dev libopencv-highgui-dev libopencv-videoio-dev libv4l-dev --no-install-recommends
+      - name: Build the fake libplumerai library
+        run: |
+          g++ -std=c++11 -O3 -Itesting -c testing/fake_libplumerai.cc
+          ar rvs libplumeraipeopledetection_fake.a fake_libplumerai.o
+      - name: Build the test application against the fake library
+        run: g++ -std=c++11 -O3 src/opencv_example.cc -Itesting libplumeraipeopledetection_fake.a `pkg-config --cflags --libs opencv4` -ldl -pthread -o opencv_example
