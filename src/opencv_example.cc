@@ -70,7 +70,10 @@ int main() {
   cv::Mat cv_image;
   while (true) {
     // Retrieve an image from the camera
-    camera.read(cv_image);
+    if (camera.read(cv_image) == false) {
+      printf("Error: could not read frame.\n");
+      return -1;
+    }
 
     // Process the frame using the Plumerai People Detection library. This
     // function is timed and framerate in FPS is reported. Note that the
@@ -122,7 +125,10 @@ int main() {
 
     // Finally display the webcam image with the resulting bounding-boxes
     cv::imshow(window_text, cv_image);
-    cv::waitKey(30);  // can be changed to force a certain framerate
+    if (cv::waitKey(30) & 0xFF == 27) {  // can be changed to force a certain framerate
+      // Exit when ESC is pressed
+      break;
+    }
   }
   return 0;
 }
