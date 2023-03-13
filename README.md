@@ -1,6 +1,6 @@
 # Plumerai People Detection OpenCV pipeline example
 
-This is the source code for a simple version of using the Plumerai People Detection library in an end-to-end demo setting. It runs on Linux, uses OpenCV and V4L, and retrieves input data from a webcam and writes box coordinates to console and to an output video stream displayed on screen. It can be modified as needed for proto-typing with the Plumerai People Detection library.
+This is the source code for a simple version of using the Plumerai People Detection library in an end-to-end demo setting. It runs on Linux, uses OpenCV and V4L, and retrieves input data from a webcam (or optionally an RTSP stream) and writes box coordinates to console and to an output video stream displayed on screen. It can be modified as needed for proto-typing with the Plumerai People Detection library.
 
 The Plumerai People Detection library itself is not included: this repository can't be used without access to the library. If you do not have access to the library and would like to evaluate it, then contact us at [plumerai.com/contact_us](https://plumerai.com/contact_us). For more information, see [plumerai.com/people-detection](https://plumerai.com/people-detection).
 
@@ -21,6 +21,10 @@ First, make sure the camera settings (`camera_height`, `camera_width`, and `came
 The higher the input resolution, the better the results can become. However, note that this might slow down the entire example application, because the camera capture and video-displaying might take up more resources. The framerate reported is purely for the Plumerai People Detection algorithm itself, and does not count camera capture or displaying of the results.
 
 Note that the example application itself (the camera capture / video decoding and displaying) is not optimized for speed. Furthermore, the people detection algorithm in its current form is not optimized for speed on x86 systems, only for targets such as Arm Cortex-A.
+
+## Optional: use an RTSP stream as input
+
+This repository also contains example code to use an RTSP video stream instead of camera data as input. The code changes are minimal, and can be enabled by uncommenting the `#define USE_RTSP_INPUT` macro  near the top of the `src/opencv_example.cc` file. Then, a little bit below the RTSP stream settings (`camera_height`, `camera_width`, and `rtsp_url`) can be changed as needed.
 
 ## Compiling the example application
 
