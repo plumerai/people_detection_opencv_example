@@ -23,10 +23,22 @@
 // how to use it.
 #include "plumerai/people_detection.h"
 
+// Enable this marco to switch the input of this example application from
+// camera input to RTSP stream:
+// #define USE_RTSP_INPUT
+
+// Input RTSP stream settings (change as needed)
+#ifdef USE_RTSP_INPUT
+constexpr auto width = 240;
+constexpr auto height = 161;
+constexpr auto rtsp_url =
+    "rtsp://wowzaec2demo.streamlock.net/vod/mp4:BigBuckBunny_115k.mp4";
+#else
 // Input camera settings (change as needed)
 constexpr auto width = 1280;
 constexpr auto height = 720;
 constexpr auto camera_id = 0;  // 0 == the first camera, 1 == the second, etc.
+#endif  // USE_RTSP_INPUT
 
 // The following line sets the capture API to Video4Linux. Change this as needed
 // on your system. See the OpenCV website for a list of all options:
@@ -57,14 +69,19 @@ int main() {
   cv::namedWindow(window_text, cv::WINDOW_AUTOSIZE);
 
   // Set-up the camera, see the above constants for the settings
+#ifdef USE_RTSP_INPUT
+  cv::VideoCapture camera(rtsp_url);
+#else
   cv::VideoCapture camera(camera_id, camera_capture_api);
   camera.set(cv::CAP_PROP_FRAME_WIDTH, width);
   camera.set(cv::CAP_PROP_FRAME_HEIGHT, height);
   camera.set(cv::CAP_PROP_FOURCC, camera_capture_format);
+#endif  // USE_RTSP_INPUT
   if (!camera.isOpened()) {
-    // If this is printed the camera might not be attached or it might not
-    // support the settings set above (width & height, capture API or format)
-    printf("Error: Could not open camera %d, verify the settings\n", camera_id);
+    // If this is printed the camera might not be attached, the stream might not
+    // be valid or they might not support the settings set above (width &
+    // height, capture API or format).
+    printf("Error: Could not open the input, verify the settings\n");
     return -1;
   }
 
