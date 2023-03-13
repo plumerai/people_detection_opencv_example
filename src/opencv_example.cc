@@ -110,6 +110,11 @@ int main() {
 
     // Process the resulting bounding-boxes if there are any
     for (auto &p : predictions) {
+      // Filter out low-confidence predictions, adjust the threshold as needed
+      if (p.confidence < 0.5f) {
+        continue;
+      }
+
       auto x_min =
           std::max(0, std::min(static_cast<int>(p.x_min * width), width - 1));
       auto y_min =
