@@ -25,7 +25,7 @@
 
 using namespace plumerai;
 
-// Enable this marco to switch the input of this example application from
+// Enable this macro to switch the input of this example application from
 // camera input to RTSP stream:
 // #define USE_RTSP_INPUT
 
@@ -101,8 +101,14 @@ int main() {
     // Plumerai Video Intelligence library is not optimized for all systems,
     // see the README for more details.
     auto start_time = std::chrono::steady_clock::now();
-    pvi.process_frame(ImagePointer<ImageFormat::PACKED_RGB888>(cv_image.data));
+    auto error_code = pvi.process_frame(
+        ImagePointer<ImageFormat::PACKED_RGB888>(cv_image.data));
     auto elapsed_time = std::chrono::steady_clock::now() - start_time;
+
+    if (error_code != ErrorCode::SUCCESS) {
+      printf("Error: Could not process the frame.\n");
+      return -1;
+    }
 
     // Report the time and framerate the above function took
     auto time_ms =
@@ -112,7 +118,11 @@ int main() {
 
     // Process the resulting bounding-boxes if there are any
     std::vector<BoxPrediction> predictions;
-    pvi.object_detection().get_detections(predictions);
+    error_code = pvi.object_detection().get_detections(predictions);
+    if (error_code != ErrorCode::SUCCESS) {
+      printf("Error: Could not get detections.\n");
+      return -1;
+    }
     for (auto &p : predictions) {
       // Convert the relative bounding-box coordinates to the image size
       auto x_min =
