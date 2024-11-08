@@ -1,6 +1,6 @@
-// Copyright (C) 2022 Plumerai Ltd under the Apache 2.0 license.
+// Copyright (C) 2024 Plumerai Ltd under the Apache 2.0 license.
 //
-// This code implements a simple demo around the Plumerai People Detection
+// This code implements a simple demo around the Plumerai Video Intelligence
 // library using OpenCV to capture webcam input and display to screen. You can
 // modify the code as needed for your prototyping use-case, it might not work
 // out-of-the-box depending on your system and camera used. See the README for
@@ -16,14 +16,16 @@
 #include "opencv2/highgui/highgui.hpp"
 #include "opencv2/videoio.hpp"
 
-// The Plumerai People Detection library. If you do not have access to this
+// The Plumerai Video Intelligence library. If you do not have access to this
 // library and would like to evaluate it, then contact us via
 // https://plumerai.com/contact_us. For more information, see our website
 // https://plumerai.com/people-detection, and docs.plumerai.com for information
 // how to use it.
-#include "plumerai/people_detection.h"
+#include "plumerai/video_intelligence.h"
 
-// Enable this marco to switch the input of this example application from
+using namespace plumerai;
+
+// Enable this macro to switch the input of this example application from
 // camera input to RTSP stream:
 // #define USE_RTSP_INPUT
 
@@ -61,11 +63,11 @@ const int colours[num_colours][3] = {
     {128, 128, 0},  {255, 215, 180}, {0, 0, 128}};
 
 int main() {
-  // Set-up the Plumerai People Detection algorithm
-  auto ppd = plumerai::PeopleDetection(height, width);
+  // Set-up the Plumerai Video Intelligence algorithm
+  auto pvi = plumerai::VideoIntelligence(height, width);
 
   // Set-up the output window
-  const auto window_text = "Plumerai People Detection";
+  const auto window_text = "Plumerai Video Intelligence";
   cv::namedWindow(window_text, cv::WINDOW_AUTOSIZE);
 
   // Set-up the camera, see the above constants for the settings
@@ -94,13 +96,19 @@ int main() {
       return -1;
     }
 
-    // Process the frame using the Plumerai People Detection library. This
+    // Process the frame using the Plumerai Video Intelligence library. This
     // function is timed and framerate in FPS is reported. Note that the
-    // Plumerai People Detection library is not optimized for all systems,
+    // Plumerai Video Intelligence library is not optimized for all systems,
     // see the README for more details.
     auto start_time = std::chrono::steady_clock::now();
-    auto predictions = ppd.process_frame(cv_image.data);
+    auto error_code = pvi.process_frame(
+        ImagePointer<ImageFormat::PACKED_RGB888>(cv_image.data));
     auto elapsed_time = std::chrono::steady_clock::now() - start_time;
+
+    if (error_code != ErrorCode::SUCCESS) {
+      printf("Error: Could not process the frame.\n");
+      return -1;
+    }
 
     // Report the time and framerate the above function took
     auto time_ms =
@@ -109,12 +117,14 @@ int main() {
     printf("Processing took %.1f ms (%d fps)\n", time_ms, fps);
 
     // Process the resulting bounding-boxes if there are any
+    std::vector<BoxPrediction> predictions;
+    error_code = pvi.object_detection().get_detections(predictions);
+    if (error_code != ErrorCode::SUCCESS) {
+      printf("Error: Could not get detections.\n");
+      return -1;
+    }
     for (auto &p : predictions) {
-      // Filter out low-confidence predictions, adjust the threshold as needed
-      if (p.confidence < 0.5f) {
-        continue;
-      }
-
+      // Convert the relative bounding-box coordinates to the image size
       auto x_min =
           std::max(0, std::min(static_cast<int>(p.x_min * width), width - 1));
       auto y_min =
